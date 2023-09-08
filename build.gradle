@@ -1,15 +1,20 @@
 plugins {
-    id 'java'
+    id 'application'
 }
 
 group 'io.github.edsuns.screensnap'
 version '1.0-SNAPSHOT'
-
-sourceCompatibility = 9
-
-// Avoid encoding issue
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+// JDK8 ~ JDK17 已测试运行正常
+def target = JavaVersion.current()
+java{
+    sourceCompatibility = target
+    targetCompatibility = target
+    if (target.isCompatibleWith(JavaVersion.VERSION_1_9)) {
+        compileJava.options.compilerArgs.addAll("--add-exports=java.desktop/sun.awt=ALL-UNNAMED","--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED")
+        compileTestJava.options.compilerArgs.addAll("--add-exports=java.desktop/sun.awt=ALL-UNNAMED","--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED")
+    }
+    compileJava.options.encoding = 'UTF-8'
+    compileTestJava.options.encoding = 'UTF-8'
 }
 
 repositories {
@@ -17,10 +22,14 @@ repositories {
 }
 
 dependencies {
-//    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // For test
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // For GlobalHotKey
     implementation("com.github.tulskiy:jkeymaster:1.3")
+
+    // For log
     implementation("org.slf4j:slf4j-api:2.0.7")
     implementation("org.slf4j:slf4j-nop:2.0.7")
 
@@ -28,12 +37,16 @@ dependencies {
     implementation("com.google.zxing:javase:3.5.2")
 }
 
-compileJava{
-    options.compilerArgs.add( "--add-exports=java.desktop/sun.awt=ALL-UNNAMED")
-    options.compilerArgs.add("--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED")
+application {
+    mainClass.set("io.github.edsuns.screensnap.App")
+    if (target.isCompatibleWith(JavaVersion.VERSION_1_9)){
+        applicationDefaultJvmArgs += '-Dsun.java2d.uiScale=1'
+        applicationDefaultJvmArgs += '--add-exports=java.desktop/sun.awt=ALL-UNNAMED'
+        applicationDefaultJvmArgs += '--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED'
+    }
+
 }
 
-compileTestJava{
-    options.compilerArgs.add( "--add-exports=java.desktop/sun.awt=ALL-UNNAMED")
-    options.compilerArgs.add("--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED")
+tasks.named("test"){
+    useJUnitPlatform()
 }

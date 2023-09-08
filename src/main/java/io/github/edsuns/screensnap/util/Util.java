@@ -32,7 +32,15 @@ public final class Util {
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         final MethodType methodType;
         try {
-            if (Runtime.version().feature() < 15) {
+            String specVersion = System.getProperty("java.specification.version");
+            int version;
+            int index = specVersion.indexOf('.');
+            if (index != -1) {
+                version = Integer.parseInt( specVersion.substring(index+1));
+            }else {
+                version = Integer.parseInt(specVersion);
+            }
+            if (version < 15) {
                 methodType = MethodType.methodType(RobotPeer.class, Robot.class, GraphicsDevice.class);
                 MethodHandle methodHandle = lookup.findVirtual(ComponentFactory.class, "createRobot", methodType).bindTo(toolkit);
                 robotPeer = (RobotPeer) methodHandle.invokeExact((Robot) null, localGraphicsEnvironment.getDefaultScreenDevice());

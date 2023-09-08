@@ -2,7 +2,7 @@
 > 下载：[ScreenSnap/releases](https://github.com/Edsuns/ScreenSnap/releases)
 
 ### 功能概览  
-> 兼容多平台
+> 兼容多平台,兼容多版本JDK(已测试JDK8~JDK17)
 - 屏幕取色
 - 屏幕二维码扫描
 - 屏幕截图
@@ -40,3 +40,6 @@ __3. 取色复制窗口__
 
 - __程序卡住：__  
 选中Windows自带控制台的内容时，`System.out`会被阻塞，导致程序卡住。右键控制台，让程序继续运行  
+
+- __JDK9及以上截图报错：__
+添加VM配置 `--add-exports=java.desktop/sun.awt=ALL-UNNAMED --add-exports=java.desktop/java.awt.peer=ALL-UNNAMED`
