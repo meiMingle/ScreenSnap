@@ -144,24 +144,39 @@ public class HomeJFrame extends JFrame {
         if (trayIcon != null) return;
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
+        //使用JDialog 作为JPopupMenu载体
+        JDialog jDialog = new JDialog();
+        //关闭JDialog的装饰器
+        jDialog.setUndecorated(true);
+        //jDialog作为JPopupMenu载体不需要多大的size
+        jDialog.setSize(1, 1);
+
         // 开始创建任务栏小图标
         // 创建弹出菜单
-        PopupMenu popup = new PopupMenu();
+        JPopupMenu popup = new JPopupMenu();
         //退出程序选项
-        MenuItem exitItem = new MenuItem(Application.res().getString("exit"));
+        JMenuItem exitItem = new JMenuItem(Application.res().getString("exit"));
         exitItem.addActionListener(e -> Application.instance().onAppClose(false));
         popup.add(exitItem);
 
-        trayIcon = new TrayIcon(APP_ICON, Application.res().getString("app_name"), popup);// 创建trayIcon
+        trayIcon = new TrayIcon(APP_ICON, Application.res().getString("app_name"));// 创建trayIcon
         trayIcon.setImageAutoSize(true);
         trayIcon.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 // 鼠标左键
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     setExtendedState(JFrame.NORMAL);
                     setVisible(!isActive());
                     toFront();
+                } else if( e.getButton() == MouseEvent.BUTTON3 && e.isPopupTrigger()) {
+                    // 右键点击弹出JPopupMenu绑定的载体以及JPopupMenu
+                    jDialog.setLocation(e.getX() + 5, e.getY() - 5 - popup.getHeight());
+                    // 显示载体
+                    jDialog.setVisible(true);
+                    jDialog.toFront();
+                    // 在载体的0,0处显示对话框
+                    popup.show(jDialog, 0, 0);
                 }
             }
         });
