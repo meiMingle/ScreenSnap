@@ -2,7 +2,7 @@
 > 下载：[ScreenSnap/releases](https://github.com/Edsuns/ScreenSnap/releases)
 
 ### 功能概览  
-> 兼容多平台,兼容多版本JDK(已测试JDK8~JDK17)
+> 兼容多平台,兼容多版本JDK(已测试JDK8、JDK11、JDK17、JDK21[EA])
 - 屏幕取色
 - 屏幕二维码扫描
 - 屏幕截图
